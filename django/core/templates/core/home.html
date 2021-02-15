@@ -1,0 +1,25 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block content %}
+
+    <div id="home">
+        <p>
+            Bienvenue,<br />
+            Les identifications sont toutes requises.
+        </p>
+
+        <form action="{% url 'home' %}" method="post">
+            {% csrf_token %}
+            <label for="agent">Votre numéro de Matricule</label><br>
+            <input class="form-control" type="text" name="agent" id="agent" value="" placeholder="1" required><br>
+            <label for="wello">Numéro d'immatriculation du Wello</label><br>
+            <input class="form-control" type="text" name="wello" id="wello" value="" placeholder="DMIA" required><br>
+            <label for="raspberry">Identifiant de votre assistant connecté</label><br>
+            <input class="form-control" type="text" name="raspberry" id="raspberry" value="" placeholder="2912" required><br>
+            <button type="submit"  class="btn btn-outline-info">Partir en patrouille</button>
+        </form>
+        <img src="{% static 'images/home-image.png' %}" id="image-wello" alt="Image Wello">
+    </div>
+
+{% endblock %}

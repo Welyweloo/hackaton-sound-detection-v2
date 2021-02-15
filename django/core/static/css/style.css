@@ -1,0 +1,108 @@
+#logo {
+    width: 100px;
+}
+
+#additional-logo {
+    display: inline-block;
+    margin-top: 5px;
+    font-size: 1.5em;
+    color: powderblue;
+}
+
+#home, #dashboard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px;
+}
+
+#dashboard {
+    margin-top: 120px;
+}
+
+label {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.btn-outline-info {
+    border-color: powderblue;
+    background-color: powderblue;
+    color: black;
+}
+
+.btn-outline-info:focus,  .btn-outline-info:hover {
+    color: powderblue;
+    border-color: powderblue;
+}
+
+#introduction-dashboard {
+    margin-bottom: 40px;
+}
+
+.casual-listenning {
+    margin-top: 50px;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: #00cc00;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
+
+.sound-detected {
+    margin-top: 50px;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: #c20000;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    animation-duration: .5s;
+    animation-name: flashing;
+    animation-iteration-count: infinite;
+    transition: none;
+}
+
+@keyframes flashing {
+    0%   { opacity:1; }
+    50%   {opacity:0; }
+    100% { opacity:1; }
+}
+
+#alert-block {
+    display: none;
+    margin: 70px auto;
+    text-align:center;
+} 
+
+
+ 
+
+button, #registered-alert-message {
+    margin: 10px;
+    width: 300px;
+}
+
+.fa-microphone-alt {
+    font-size: 80px;
+    margin-top: 50px;
+    margin-bottom: 20px;
+    animation-duration: .5s;
+    animation-name: flashing;
+    animation-iteration-count: infinite;
+    transition: none;
+}
+
+#recording {
+
+    text-align:center;
+    margin-top: 20px;
+    margin-bottom: 50px;
+}
+
+#recording-display, #alert-form {
+    display: none;
+}

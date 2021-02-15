@@ -1,0 +1,117 @@
+{% extends "core/base.html" %}
+
+    {% block content %}
+
+    <div id="dashboard">
+        <p id="introduction-dashboard">
+            Bonjour {{ patrol.agent.first_name }} {{ patrol.agent.last_name }},<br />
+            Vous êtes à bord du Wello <em>{{ patrol.wello.plate_number }}</em>
+        </p>
+
+        <p><strong>Assistant connecté en écoute:</strong> <span id="listening-status"> {{ patrol.connected_assistant.listenning|yesno:"oui,non" }} </span></p>
+
+        <div id="signal" class="casual-listenning"></div>
+
+        <div id="alert-block">
+            <p><strong>Attention</strong> son anormal détecté:</p>
+            <p id="detection-text"><span id="alert-time">Gunshot</span> à <span id="sound-nature"=>12h12</span></p>
+
+            <button type="button" id="cancel-alert" class="btn btn-danger">Fausse alerte</button>
+            <button type="button" id="confirm-alert" class="btn btn-outline-info">Confirmer l'alerte</button>
+        </div>
+
+    </div>
+
+{% endblock %}
+{% block javascript %}
+{{ block.super }}
+<script>
+    var last_alert_fetched = ''
+    
+
+    function refreshListeningStatus() {
+        fetch('/get_listenning_status')
+        .then(response => response.text())
+        .then((response) => {
+            console.log(response)
+            if(Boolean(response)) {
+                document.getElementById('listening-status').textContent = 'Oui';
+            }
+            else
+            {
+                document.getElementById('listening-status').textContent = 'Non';
+            }
+
+        });
+    }
+
+    function refreshAlert() {
+        fetch('/get_sound_detected')
+        .then(response => response.json())
+        .then((response) => {
+            alerte_detail_nature = document.getElementById('alert-time');
+            alerte_detail_hour = document.getElementById('sound-nature');
+            alert_block = document.getElementById('alert-block')
+            signal = document.getElementById('signal')
+            dashboard = document.getElementById('dashboard')
+            
+            if(response.length > 0)
+            {
+                last_alert_fetched = response[0]
+                alerte_detail_nature.textContent = response[0].fields.sound_nature;
+                alerte_detail_hour.textContent = response[0].fields.detected_at;
+                
+                alert_block.style.display = 'block';
+                signal.setAttribute('class','sound-detected');
+                dashboard.style.marginTop = '30px'
+
+            }
+            else
+            {
+                alerte_detail_nature.textContent = '';
+                alerte_detail_hour.textContent = '';
+                alert_block.style.display = 'none';
+                signal.setAttribute('class','casual-listenning');
+                dashboard.style.marginTop = '120px'
+            }
+
+
+        });
+    }
+
+    // tiens : https://github.com/Welyweloo/hackaton-sound-detection
+
+    function refreshStatus() {
+        refreshListeningStatus();
+        refreshAlert();
+    }
+
+
+    function confirmAlert() {
+        if(last_alert_fetched != '') {
+            window.location.href = '/confirm_alert/' + last_alert_fetched.pk
+        }
+        
+    }
+
+    function cancelAlert() {
+        form = new FormData()
+        var myHeaders = new Headers();
+
+        form.append('detection_id',last_alert_fetched.pk)
+        myHeaders.append('X-CSRFToken',csrftoken)
+
+        fetch("/cancel_alert/", {
+        method: "POST",
+        body: form,
+        headers: myHeaders
+        })
+    }
+
+    refreshStatus()
+    setInterval(refreshStatus,5000)
+
+    document.getElementById('confirm-alert').addEventListener('click',confirmAlert);
+    document.getElementById('cancel-alert').addEventListener('click',cancelAlert);
+</script>
+{% endblock  %}

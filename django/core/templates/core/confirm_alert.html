@@ -1,0 +1,89 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+
+<div id="dashboard">
+    <p><strong>Appuyer sur enregistrer pour lancer une alerte:</strong></p>
+    <button type="button" id="start-recording" class="btn btn-outline-info" onclick="startVoiceRecognition()">Enregistrer</button>
+    <div id="recording-display">
+        <i class="fas fa-microphone-alt"></i>
+        <p class="recording">Enregistrement en cours</p>
+    </div>
+
+    <div id="alert-form">
+        <label for="registered-alert-message">Votre message d'alerte</label><br>
+        <input class="form-control" type="text" name="registered-alert-message" id="registered-alert-message" value="" required><br>
+        <button type="submit" id="confirm-alert" class="btn btn-outline-info">Envoyer l'alerte</button>
+    </div>
+
+    <div id="text"></div>
+</div>
+
+{% endblock %}
+
+{% block javascript %}
+    {{ block.super }} 
+     
+    <script> 
+
+
+    function addAlertComment(value)
+    {
+        form = new FormData()
+        var myHeaders = new Headers();
+        detection_id = window.location.pathname.match(/\d+/g)[0]
+        form.append('detection_id', detection_id)
+        form.append('value',value)
+        myHeaders.append('X-CSRFToken',csrftoken)
+        console.log("jnbkjnbknkjkn")
+        fetch("/confirm_alert/" + detection_id + '/', {
+        method: "POST",
+        body: form
+        })
+        .then(function(data){
+            //$('#text').html("<p>Votre signalement a été pris en compte</p>");
+            document.getElementById('text').textContent = 'Votre signalement a été pris en compte';
+            setTimeout(function(){
+                window.location.href = '/dashboard'
+            },5000)
+            console.log("Commentaire enregistré");
+            console.log(data.response)
+        });
+    }
+
+        var reconnaissance = new webkitSpeechRecognition();
+
+        //recognition.onresult = function(event) {
+        if ('webkitSpeechRecognition' in window) {
+            console.log("oui")
+        } else {
+            console.log("non")
+        }
+        reconnaissance.lang = 'fr-FR';
+        reconnaissance.continuous = true;
+
+        let value = ''; 
+        reconnaissance.onresult = function (event) {
+            inputTexte = document.getElementById('registered-alert-message');
+            value = inputTexte.value = event.results[0][0].transcript;            
+        }
+
+        function startVoiceRecognition() {//lance la reconnaissance du son
+            document.getElementById('recording-display').style.display = 'block';
+            document.getElementById('start-recording').style.display = 'none';
+            document.getElementById('alert-form').style.display = 'block';
+            console.log('j\'enregistre');
+            reconnaissance.start();
+        }
+
+        function stopVoiceRecognition(evt) {//stop la reconnaissance du son
+            evt.preventDefault();
+            console.log('stop recording');
+            reconnaissance.stop();
+            addAlertComment(value);
+        }
+
+        document.getElementById('confirm-alert').addEventListener("click",stopVoiceRecognition)
+    </script>
+
+{% endblock %}
