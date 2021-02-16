@@ -4,7 +4,7 @@
 Aurélie - Benjamin - Maxime - Viverk
 
 ## Auteurs du projet présent (v2 du projet initial) : 
-Axel Perrier & Aurélie Anglio
+Aurélie Anglio
 
 ## Thème
 Conception d'un prototype de reconnaissance et traitement de signal audio à connecter sur un Wello (vélo-cargo électrique à énergie solaire) à destination de la délégation ministérielle pour l'intelligence artificielle.
