@@ -23,6 +23,10 @@ import threading
 import time
 import wave
 
+# Retrieve config data
+config = configparser.ConfigParser()
+config.read('conf.ini')
+
 
 ### Defining constant ###
 SOUND_THRESHOLD = 250               ### TO FIND YOUR SOUND_THRESHOLD PRINT THE RMS VALUE
@@ -34,14 +38,10 @@ RATE = 16000
 SWIDTH = 2
 TIMEOUT_LENGTH = 5
 RECORDED_SOUND_DIRECTORY = r'recorded_sounds'
-LOCALHOST = 'http://192.168.0.5:8000'
+SERVER = config['RASPBERRY']['Address']
 
 # Load the MODEL.
 MODEL = hub.load('https://tfhub.dev/google/yamnet/1')
-
-# Retrieve config data
-config = configparser.ConfigParser()
-config.read('conf.ini')
 
 class Classify:
     """Sound recognition and classification"""
@@ -111,7 +111,7 @@ class Classify:
 
         #Sending POST request to API
         if infered_class not in ['Speech', 'Silence']:
-            url = LOCALHOST + '/set_sound_detected/'
+            url = SERVER + '/set_sound_detected/'
             data = {
                 'sound_nature' : infered_class,
                 'serial_number': config['RASPBERRY']['SerialNumber']
@@ -194,7 +194,7 @@ class Recorder:
         while True:
 
             # Sending post request to turn on listenning status
-            url = LOCALHOST + '/set_listenning_status/'+config['RASPBERRY']['SerialNumber']
+            url = SERVER + '/set_listenning_status/'+config['RASPBERRY']['SerialNumber']
             response = requests.get(url)
 
             input = self.stream.read(CHUNK)
@@ -214,7 +214,7 @@ if __name__ == '__main__':
     while True:
 
         # Retrieving permission to start the program
-        url = LOCALHOST + '/get_assistant_status/'+config['RASPBERRY']['SerialNumber']
+        url = SERVER + '/get_assistant_status/'+config['RASPBERRY']['SerialNumber']
         response = requests.get(url)
 
         if response.text == 'True':
