@@ -3,11 +3,7 @@
 ## Auteurs projet initial : https://github.com/Welyweloo/hackaton-sound-detection
 Aurélie - Benjamin - Maxime - Viverk
 
-<<<<<<< HEAD
-## Auteurs du projet actuel (v2 du projet initial) : 
-=======
 ## Auteurs du projet présent (v2 du projet initial) : 
->>>>>>> cd39a2ea5eedbe7a32d2903ea4087e05d8d3e61a
 Aurélie Anglio
 
 ## Thème
