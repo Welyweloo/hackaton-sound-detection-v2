@@ -3,8 +3,8 @@
 ## Auteurs projet initial : https://github.com/Welyweloo/hackaton-sound-detection
 Aurélie - Benjamin - Maxime - Viverk
 
-## Auteurs du projet présent (v2 du projet initial) : 
-Axel Perrier & Aurélie Anglio
+## Auteurs du projet actuel (v2 du projet initial) : 
+Aurélie Anglio
 
 ## Thème
 Conception d'un prototype de reconnaissance et traitement de signal audio à connecter sur un Wello (vélo-cargo électrique à énergie solaire) à destination de la délégation ministérielle pour l'intelligence artificielle.
@@ -17,40 +17,99 @@ Ce programme a été testé avec la configuration suivante:
 Pour la détection, l'enregistrement et la reconnaissance d'un son :
 - Ubuntu 20.04
 - Python3.8
-
-Pour l'interface web :
-- Mac Bic Sur
+  
+Pour l'interface web (serveur web) :
+- Ubuntu 20.04
 - Python3.8
 - Django 3.0.8
+
+Client web compatible:
 - Chrome Version 88.0.4324.150 (Build officiel) (x86_64)
 
-Attention la reconnaissance vocale ne fonctionne que sous Chrome sur ordinateur.
-Solution pour utiliser le micro sans https: Aller sur `chrome://flags/#unsafely-treat-insecure-origin-as-secure`et autoriser `Insecure origins treated as secure`
+Attention la reconnaissance vocale depuis l'interface web (SpeechToText) ne fonctionne que sous Chrome sur ordinateur.
+Solution pour utiliser le micro sans https: 
+> Aller sur `chrome://flags/#unsafely-treat-insecure-origin-as-secure`
+ 
+> Autoriser `Insecure origins treated as secure`
+
 > Source: https://medium.com/@Carmichaelize/enabling-the-microphone-camera-in-chrome-for-local-unsecure-origins-9c90c3149339
 
 1. Cloner ce dépôt : 
-```
+```bash
 git clone https://github.com/Welyweloo/hackaton-sound-detection.git
 cd sound-detector
 ```
 
-2. Installer les pré-requis :
+2. Installer les pré-requis et configurer :
 
-Pour le dossier sound-detector:
+### Installation du serveur web:
+```bash
+cd django
+pip install -r requirements.txt
 ```
+Il faut modifier le fichier settings.py avec vos informations.
+Pour settings.py, il faut modifier avec vos informations les lignes 120 à 129 :
+```python
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = 'yourownkey' #Define your own key
+
+EMAIL_HOST = 'smtp.free.fr' #Pick your own
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'youremail@email.email'
+EMAIL_HOST_PASSWORD = 'yourpassword'
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+```
+
+Vous pouvez maintenant lancer le serveur web:
+```bash
+python3 manage.py runserver 0.0.0.0:8080
+```
+
+Aller sur le back office : `http://URL_SERVEUR/admin/`
+
+>Username : `admin`
+
+>Password : `wello`
+
+Modifier l'e-mail de la station de police (PoliceStations > PoliceStation Object > Email) avec l'email sur lequel vous souhaitez recevoir les alertes.
+### Installation du détecteur de son:
+```bash
+cd sound-detector
 sudo apt-get install portaudio19-dev
 pip install -r requirements.txt
 ```
 
-Pour le dossier django:
+Editer le fichier sound-detector/sound-detector/conf.ini 
 ```
-pip install -r requirements.txt
+[RASPBERRY]
+;Modifier avec l'adresse ip et le port de votre serveur web
+Address=http://192.168.0.5:8000  
 ```
 
-3. Pour lancer le programme de reconnaissance et traitement de signal audio 
+Dans le fichier detect-record-classify.py, la constante THRESHOLD détermine le seuil (RMS - niveau sonore moyen) qui permet de déclencher l'enregistrement audio. 
+
+Le print ligne 202, vous permettra de déterminer le seuil compte tenu de votre environnement.
+```python
+rms_val = self.rms(input)
+print(rms_val)
 ```
+
+### Etapes
+
+1. Lancer le programme de reconnaissance et traitement de signal audio 
+```bash
 python3 detect-record-classify.py
 ```
+2. Identification 
+>Votre numéro de Matricule:
+`1`
+
+>Numéro d'immatriculation du Wello:
+`DMIA`
+
+>Identifiant de votre assistant connecté:
+`2912`
 
 
 ## Use Cases 
